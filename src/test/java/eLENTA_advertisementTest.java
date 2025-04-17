@@ -15,8 +15,6 @@ public class eLENTA_advertisementTest {
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
         driver.findElement(By.className("fc-button-label")).click();
     }
-    WebElement fileInput = driver.findElement(By.id("fileinput-label"));
-
     @BeforeClass
     public void setUp(){
         driver = new ChromeDriver();
@@ -44,12 +42,13 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("phone")).sendKeys("+37067123456");
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"fileinput-label\"]")).click();
-        fileInput.sendKeys("C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike_jpg.jpg");
+//        driver.findElement(By.xpath("//*[@id=\"fileinput-label\"]")).click();
+        driver.findElement(By.id("inputfile")).sendKeys("C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike_jpg.jpg");
         driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
         driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
         driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
     }
+
 
 
 
