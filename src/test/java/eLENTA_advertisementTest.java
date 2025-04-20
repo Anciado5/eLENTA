@@ -1,7 +1,6 @@
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -471,13 +470,87 @@ public class eLENTA_advertisementTest {
                 "C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike 8.jpg\n" +
                 "C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike 9.jpg\n" +
                 "C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike 10.jpg");
+        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
+        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
+        driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
+        driver.findElement(By.className("delete")).click();
+        Alert alert = driver.switchTo().alert();
+        alert.accept();
     }
     @Test
     public void regAdWithPngPhoto(){
         positiveTestInput();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         driver.findElement(By.id("inputfile")).sendKeys("C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike_png.png");
+        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
+        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
+        driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
+        driver.findElement(By.className("delete")).click();
+        Alert alert = driver.switchTo().alert();
+        alert.accept();
     }
+    @Test
+    public void regAdWithWebpPhoto(){
+        positiveTestInput();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        driver.findElement(By.id("inputfile")).sendKeys("C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike_webp.webp");
+        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
+        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
+        driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
+        driver.findElement(By.className("delete")).click();
+        Alert alert = driver.switchTo().alert();
+        alert.accept();
+    }
+    @Test
+    public void regAdWithGifPhoto(){
+        positiveTestInput();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        driver.findElement(By.id("inputfile")).sendKeys("C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\m_gif.gif");
+        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
+        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
+        driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
+        driver.findElement(By.className("delete")).click();
+        Alert alert = driver.switchTo().alert();
+        alert.accept();
+    }
+    @Test
+    public void regAdWithBigSizePhoto(){
+        positiveTestInput();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+        driver.findElement(By.id("inputfile")).sendKeys("C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\big.jpg");
+        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
+        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
+        driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
+        driver.findElement(By.className("delete")).click();
+        Alert alert = driver.switchTo().alert();
+        alert.accept();
+    }
+    @Test
+    public void regAdWithVideo(){
+        positiveTestInput();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+        driver.findElement(By.id("inputfile")).sendKeys("C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\sample-5s.mp4");
+        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
+        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
+        driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
+        driver.findElement(By.className("delete")).click();
+        Alert alert = driver.switchTo().alert();
+        alert.accept();
+    }
+    @Test
+    public void regAdWithWordDocument(){
+        positiveTestInput();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+        driver.findElement(By.id("inputfile")).sendKeys("C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\dviraciu prasymo_blankas.doc");
+        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
+        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
+        driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
+        driver.findElement(By.className("delete")).click();
+        Alert alert = driver.switchTo().alert();
+        alert.accept();
+    }
+
+
 
 
 
