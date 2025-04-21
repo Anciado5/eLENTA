@@ -75,8 +75,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
         driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
         driver.findElement(By.className("delete")).click();
-        Alert alert = driver.switchTo().alert();
-        alert.accept();
+        driver.switchTo().alert().accept();
     }
     @Test
     public void regAdWithSameInformation(){

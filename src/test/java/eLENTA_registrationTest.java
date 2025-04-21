@@ -177,6 +177,7 @@ public class eLENTA_registrationTest {
         driver.findElement(By.id("Password")).sendKeys(manyUnitPass);
         driver.findElement(By.id("Password2")).sendKeys(manyUnitPass);
         driver.findElement(By.xpath("//*[@id=\"main-container\"]/form/fieldset/table/tbody/tr[11]/td[2]/input")).click();
+        System.out.println(manyUnitPass);
     }
     @Test
     public void registrationMissmatchedPassword(){
