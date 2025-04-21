@@ -133,6 +133,15 @@ public class eLENTA_registrationTest {
         driver.findElement(By.xpath("//*[@id=\"main-container\"]/form/fieldset/table/tbody/tr[11]/td[2]/input")).click();
     }
     @Test//+
+    public void registrationInvalidEmail5(){
+        driver.get("https://elenta.lt/registracija");
+        driver.findElement(By.id("UserName")).sendKeys("lookas" + Math.round(Math.random() * 888) + 888);
+        driver.findElement(By.id("Email")).sendKeys("lookas@google.mail.com");
+        driver.findElement(By.id("Password")).sendKeys("lookas123");
+        driver.findElement(By.id("Password2")).sendKeys("lookas123");
+        driver.findElement(By.xpath("//*[@id=\"main-container\"]/form/fieldset/table/tbody/tr[11]/td[2]/input")).click();
+    }
+    @Test//+
     public void registrationNoEmail(){
         driver.get("https://elenta.lt/registracija");
         driver.findElement(By.id("UserName")).sendKeys("lookas" + Math.round(Math.random() * 888) + 888);
