@@ -15,6 +15,7 @@ public class eLENTA_advertisementTest {
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
         driver.findElement(By.className("fc-button-label")).click();
     }
+
     public static String generateRndLetters(int length) {
         String symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
         String text = "";
@@ -23,6 +24,7 @@ public class eLENTA_advertisementTest {
         }
         return text;
     }
+
     public static String generateRndNmbr(int length) {
         String symbols = "1234567890";
         String text = "";
@@ -31,6 +33,7 @@ public class eLENTA_advertisementTest {
         }
         return text;
     }
+
     public static String generateRndSymbols(int length) {
         String symbols = "`~!@#$%^&*()_+-=[]{}|;:',<.>/?";
         String text = "";
@@ -47,6 +50,7 @@ public class eLENTA_advertisementTest {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
         acceptCookies();
     }
+
     @BeforeMethod
     public void beforeMethod(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -57,6 +61,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("phone")).clear();
         driver.findElement(By.id("email")).clear();
     }
+
     private static void positiveTestInput() {
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
         driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
@@ -67,6 +72,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdPositiveTest(){
         positiveTestInput();
@@ -77,10 +83,12 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.className("delete")).click();
         driver.switchTo().alert().accept();
     }
+
     @Test
     public void regAdWithSameInformation(){
         positiveTestInput();
     }
+
     @Test
     public void regAdWithNoTitle(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -92,6 +100,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithSymbolAsTitle(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -103,6 +112,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWith170LettersAsTitle(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -114,6 +124,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithNoDescription(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -125,6 +136,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithOneSymbolDescription(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -136,6 +148,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithThreeLettersDescription(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -147,6 +160,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWith70000LettersDescription(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -158,6 +172,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithNoPrice(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -169,6 +184,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithZeroAsPrice(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -180,6 +196,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithTenNumberLengtPrice(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -191,6 +208,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithLetterAsPrice(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -202,6 +220,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithDifferentCity(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -213,6 +232,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithNoCity(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -224,6 +244,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithOneLetterCity(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -235,6 +256,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithNoPhoneNumber(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -246,6 +268,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithNoCodePhoneNumber(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -257,6 +280,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithPhoneNumberWithSpaces(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -268,6 +292,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithOneNumberPhoneNumber(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -279,6 +304,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithIncorrectPhoneNumber(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -290,6 +316,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithIncorrectPhoneNumber2(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -301,6 +328,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithCountryCodeAsPhoneNumber(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -312,6 +340,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithLettersAsPhoneNumber(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -323,6 +352,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithSymbolsAsPhoneNumber(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -334,6 +364,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithLatvianPhoneNumber(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -345,6 +376,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithPolishPhoneNumber(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -356,6 +388,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithUKPhoneNumber(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -367,6 +400,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithNoEmail(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -378,6 +412,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithInvalidEmail(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -389,6 +424,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("user@");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithInvalidEmail1(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -400,6 +436,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("email.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithInvalidEmail2(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -411,6 +448,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("user@com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithInvalidEmail3(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -422,6 +460,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("1@gmil.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithInvalidEmail4(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -433,6 +472,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("1@1@.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithInvalidEmail5(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -444,6 +484,7 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.id("email")).sendKeys("@.com");
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
+
     @Test
     public void regAdWithNoPhoto(){
         positiveTestInput();
@@ -454,6 +495,7 @@ public class eLENTA_advertisementTest {
         Alert alert = driver.switchTo().alert();
         alert.accept();
     }
+
     @Test
     public void regAdWith10JpgPhotos(){
         positiveTestInput();
@@ -476,6 +518,7 @@ public class eLENTA_advertisementTest {
         Alert alert = driver.switchTo().alert();
         alert.accept();
     }
+
     @Test
     public void regAdWithPngPhoto(){
         positiveTestInput();
@@ -488,6 +531,7 @@ public class eLENTA_advertisementTest {
         Alert alert = driver.switchTo().alert();
         alert.accept();
     }
+
     @Test
     public void regAdWithWebpPhoto(){
         positiveTestInput();
@@ -500,6 +544,7 @@ public class eLENTA_advertisementTest {
         Alert alert = driver.switchTo().alert();
         alert.accept();
     }
+
     @Test
     public void regAdWithGifPhoto(){
         positiveTestInput();
@@ -512,6 +557,7 @@ public class eLENTA_advertisementTest {
         Alert alert = driver.switchTo().alert();
         alert.accept();
     }
+
     @Test
     public void regAdWithBigSizePhoto(){
         positiveTestInput();
@@ -524,6 +570,7 @@ public class eLENTA_advertisementTest {
         Alert alert = driver.switchTo().alert();
         alert.accept();
     }
+
     @Test
     public void regAdWithVideo(){
         positiveTestInput();
@@ -536,6 +583,7 @@ public class eLENTA_advertisementTest {
         Alert alert = driver.switchTo().alert();
         alert.accept();
     }
+
     @Test
     public void regAdWithWordDocument(){
         positiveTestInput();
