@@ -54,12 +54,6 @@ public class eLENTA_advertisementTest {
     @BeforeMethod
     public void beforeMethod(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).clear();
-        driver.findElement(By.id("text")).clear();
-        driver.findElement(By.id("price")).clear();
-        driver.findElement(By.id("location-search-box")).clear();
-        driver.findElement(By.id("phone")).clear();
-        driver.findElement(By.id("email")).clear();
     }
 
     private static void positiveTestInput() {

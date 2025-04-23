@@ -25,6 +25,7 @@ public class eLENTA_registrationTest {
         }
         return text;
     }
+
     public static String generateRndLtr(int length) {
         String symbols = "ÁÀÂÄÅĀĄÃÆÇĆČĐÉÈÊËĒĘĖƑĞĢĦÍÌÎÏĪĮĶĻŁŃŅÑÓÒÔÖÕØŌŒŔŘŚŠŞŤÞÚÙÛÜŪŲÝŹŻŽ";
         String text = "";
@@ -33,6 +34,7 @@ public class eLENTA_registrationTest {
         }
         return text;
     }
+
     public static String generateRndNmbr(int length) {
         String symbols = "1234567890";
         String text = "";
@@ -129,7 +131,7 @@ public class eLENTA_registrationTest {
         Assert.assertEquals(actual, expected);
     }
 
-    @Test//!!!
+    @Test//+++
     public void registration257LettersUsername(){
 //        fillForm(generateRndLtr(257), (int)Math.round(Math.random() * 888) + 888 + "rookas@gmail.com", "rookas123", "rookas123");
         String actual = "";
@@ -140,16 +142,16 @@ public class eLENTA_registrationTest {
         driver.findElement(By.id("Password")).sendKeys("rookas123");
         driver.findElement(By.id("Password2")).sendKeys("rookas123");
 
-        String usernameInputLength = driver.findElement(By.id("UserName")).getText();
-        Assert.assertTrue(usernameInputLength.length() == 257);
+        String usernameInputValue = driver.findElement(By.id("UserName")).getAttribute("value");
+        System.out.println(usernameInputValue.length());
+        Assert.assertTrue(usernameInputValue.length() == 257);
 
-//        driver.findElement(By.xpath("//*[@id=\"main-container\"]/form/fieldset/table/tbody/tr[11]/td[2]/input")).click();
+        driver.findElement(By.xpath("//*[@id=\"main-container\"]/form/fieldset/table/tbody/tr[11]/td[2]/input")).click();
         try{
             actual = driver.findElement(By.xpath("//*[@id=\"main-container\"]/form/fieldset/table/tbody/tr[1]/td[2]/span")).getText();
         }
         catch (Exception e){}
         Assert.assertEquals(actual, expected);
-        System.out.println(usernameInputLength);
     }
 
     @Test//+++
@@ -381,11 +383,22 @@ public class eLENTA_registrationTest {
         Assert.assertEquals(actual, expected);
     }
 
-    @Test//!!!
+    @Test//+++
     public void registrationInvalidPassword2(){
-        fillForm("rookas" + Math.round(Math.random() * 888) + 888, (int)Math.round(Math.random() * 888) + 888 + "rookas@gmail.com", manyUnitPass + "A", manyUnitPass + "A");
+//        fillForm("rookas" + Math.round(Math.random() * 888) + 888, (int)Math.round(Math.random() * 888) + 888 + "rookas@gmail.com", manyUnitPass + "A", manyUnitPass + "A");
         String actual = "";
         String expected = "Slaptažodis negali viršyti 128 simbolių!";
+
+        driver.findElement(By.id("UserName")).sendKeys("rookas" + Math.round(Math.random() * 888) + 888);
+        driver.findElement(By.id("Email")).sendKeys((int)Math.round(Math.random() * 888) + 888 + "rookas@gmail.com");
+        driver.findElement(By.id("Password")).sendKeys(manyUnitPass + "A");
+        driver.findElement(By.id("Password2")).sendKeys(manyUnitPass + "A");
+
+        String passwordInputValue = driver.findElement(By.id("Password")).getAttribute("value");
+        System.out.println(passwordInputValue.length());
+        Assert.assertTrue(passwordInputValue.length() == 129);
+
+        driver.findElement(By.xpath("//*[@id=\"main-container\"]/form/fieldset/table/tbody/tr[11]/td[2]/input")).click();
         try{
             actual = driver.findElement(By.xpath("//*[@id=\"main-container\"]/form/fieldset/table/tbody/tr[7]/td[2]/span")).getText();
         }
