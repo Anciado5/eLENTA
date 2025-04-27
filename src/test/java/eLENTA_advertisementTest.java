@@ -1,15 +1,22 @@
-import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.time.Duration;
+import java.util.List;
 
 public class eLENTA_advertisementTest {
     public static WebDriver driver;
+
+    public static WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
     public void acceptCookies(){
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
@@ -18,6 +25,15 @@ public class eLENTA_advertisementTest {
 
     public static String generateRndLetters(int length) {
         String symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        String text = "";
+        for (int i = 0; i < length; i++) {
+            text += symbols.charAt((int) (Math.random()*symbols.length()));
+        }
+        return text;
+    }
+
+    public static String generateSpecialLtr(int length) {
+        String symbols = "ÁÀÂÄÅĀĄÃÆÇĆČĐÉÈÊËĒĘĖƑĞĢĦÍÌÎÏĪĮĶĻŁŃŅÑÓÒÔÖÕØŌŒŔŘŚŠŞŤÞÚÙÛÜŪŲÝŹŻŽ";
         String text = "";
         for (int i = 0; i < length; i++) {
             text += symbols.charAt((int) (Math.random()*symbols.length()));
@@ -48,6 +64,7 @@ public class eLENTA_advertisementTest {
         driver = new ChromeDriver();
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         acceptCookies();
     }
 
@@ -56,8 +73,26 @@ public class eLENTA_advertisementTest {
         driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
     }
 
-    private static void positiveTestInput() {
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
+    private void positiveTestInput(String title, String text, String price, String locationSearchBox, String phone, String email) {
+        driver.findElement(By.id("title")).sendKeys(title);
+        driver.findElement(By.id("text")).sendKeys(text);
+        driver.findElement(By.id("price")).sendKeys(price);
+        driver.findElement(By.id("location-search-box")).sendKeys(locationSearchBox);
+        driver.findElement(By.id("phone")).sendKeys(phone);
+        driver.findElement(By.id("email")).sendKeys(email);
+        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+    }
+
+    public void wait(int time){
+        try{
+            Thread.sleep(time);
+        }
+        catch (Exception e){}
+    }
+
+//    positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas", "+37067123456", "bike@gmail.com");
+
+    private static void positiveTestFirstPage() {
         driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
         driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
         driver.findElement(By.id("price")).sendKeys("150");
@@ -67,432 +102,531 @@ public class eLENTA_advertisementTest {
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
     }
 
-    @Test
+    private static void positiveTestNextPages(String x) {
+        driver.findElement(By.id("inputfile")).sendKeys(x);
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.id("inputfile")));
+        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
+        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
+        driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
+    }
+
+    @AfterMethod
+    public void afterMethod(){
+        try {
+            driver.findElement(By.className("delete")).click();
+            driver.switchTo().alert().accept();
+        } catch (Exception e) {}
+    }
+
+    @Test//+++
     public void regAdPositiveTest(){
-        positiveTestInput();
-        driver.findElement(By.id("inputfile")).sendKeys("C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike_jpg1.jpg");
-        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
-        driver.findElement(By.className("delete")).click();
-        driver.switchTo().alert().accept();
+        positiveTestFirstPage();
+        positiveTestNextPages("C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike_jpg1.jpg");
+        String expected = "SKELBIMAS RODOMAS";
+        String actual = "";
+        try{
+            actual = driver.findElement(By.xpath("//*[@id=\"main-container\"]/h4")).getText();
+        }
+        catch (Exception e){}
+        Assert.assertEquals(actual, expected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithSameInformation(){
-        positiveTestInput();
+        positiveTestFirstPage();
+        positiveTestNextPages("C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike_jpg1.jpg");
+        String notExpected = "SKELBIMAS RODOMAS";
+        String actual = "";
+        try{
+            actual = driver.findElement(By.xpath("//*[@id=\"main-container\"]/h4")).getText();
+        }
+        catch (Exception e){}
+        Assert.assertNotEquals(actual, notExpected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithNoTitle(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas", "+37067123456", "bike@gmail.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("te")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithSymbolAsTitle(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys(".");
+        positiveTestInput("^", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas", "+37067123456", "bike@gmail.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("te")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
+    }
+
+    @Test//+++
+    public void regAdWithOneLetterAsTitle(){
+        positiveTestInput(generateRndLetters(1), "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas", "+37067123456", "bike@gmail.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("te")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
+    }
+
+    @Test//+++
+    public void regAdWithSpecialLettersAsTitle(){
+        positiveTestInput(generateSpecialLtr(8), "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas", "+37067123456", "bike@gmail.com");
+        String expected = "display:none";
+        String actual = driver.findElement(By.id("te")).getDomAttribute("style");
+        Assert.assertEquals(actual,expected);
+    }
+
+    @Test//+++
+    public void regAdWith150LettersAsTitle(){
+        positiveTestInput(generateRndLetters(150), "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas", "+37067123456", "bike@gmail.com");
+        String expected = "display:none";
+        String actual = driver.findElement(By.id("te")).getDomAttribute("style");
+        Assert.assertEquals(actual,expected);
+    }
+
+    @Test//+++
+    public void regAdWith151LetterAsTitle(){
+        String actual = "";
+        String notExpected = "display:none";
+
+        driver.findElement(By.id("title")).sendKeys(generateRndLetters(151));
         driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
         driver.findElement(By.id("price")).sendKeys("150");
         driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
         driver.findElement(By.id("phone")).sendKeys("+37067123456");
         driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
+
+        String usernameInputValue = driver.findElement(By.id("title")).getAttribute("value");
+        System.out.println(usernameInputValue.length());
+        Assert.assertTrue(usernameInputValue.length() == 151);
+
         driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        try{
+            actual = driver.findElement(By.id("te")).getDomAttribute("style");
+        }
+        catch (Exception e){}
+        Assert.assertNotEquals(actual, notExpected);
     }
 
-    @Test
-    public void regAdWith170LettersAsTitle(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys(generateRndLetters(170));
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+    @Test//+++
+    public void regAdWithCyrillicTitle(){
+        positiveTestInput("иванпетров", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas", "+37067123456", "bike@gmail.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("te")).getDomAttribute("style");
+        Assert.assertNotEquals(actual, notExpected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithNoDescription(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "", "150", "Kaunas", "+37067123456", "bike@gmail.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("txte")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithOneSymbolDescription(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("/");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", ".", "150", "Kaunas", "+37067123456", "bike@gmail.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("txte")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
-    public void regAdWithThreeLettersDescription(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys(generateRndLetters(3));
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+    @Test//+++
+    public void regAdWithTwoLettersDescription(){
+        positiveTestInput("Used Mountain Bike for Sale", generateRndLetters(2), "150", "Kaunas", "+37067123456", "bike@gmail.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("txte")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
-    public void regAdWith70000LettersDescription(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys(generateRndLetters(70000));
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+    @Test//+++
+    public void regAdWithCyrillicDescription(){
+        positiveTestInput("Used Mountain Bike for Sale", "иванпетров", "150", "Kaunas", "+37067123456", "bike@gmail.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("txte")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
+    @Test//+++
+    public void regAdWithJapaneseDescription(){
+        positiveTestInput("Used Mountain Bike for Sale", "山田太郎山田太郎", "150", "Kaunas", "+37067123456", "bike@gmail.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("txte")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
+    }
+
+    @Test//+++
     public void regAdWithNoPrice(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "", "Kaunas", "+37067123456", "bike@gmail.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("pre")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithZeroAsPrice(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("0");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "0", "Kaunas", "+37067123456", "bike@gmail.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("pre")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
-    public void regAdWithTenNumberLengtPrice(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys(generateRndNmbr(10));
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+    @Test//+++
+    public void regAdWithTenNumberLengthPrice(){
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", generateRndNmbr(10), "Kaunas", "+37067123456", "bike@gmail.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("pre")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithLetterAsPrice(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys(generateRndLetters(1));
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", generateRndLetters(4), "Kaunas", "+37067123456", "bike@gmail.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("pre")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
-    public void regAdWithDifferentCity(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Cekoniskes");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
-    }
-
-    @Test
+    @Test//+++
     public void regAdWithNoCity(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "", "+37067123456", "bike@gmail.com");
+        String expected = "Įveskite miestą.";
+        String actual = "";
+        try{
+            actual = driver.findElement(By.xpath("//*[@id=\"location-container\"]/label/span")).getText();
+        }
+        catch (Exception e){}
+        Assert.assertEquals(actual, expected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithOneLetterCity(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys(generateRndLetters(1));
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", generateRndLetters(1), "+37067123456", "bike@gmail.com");
+        String expected = "Įveskite miestą.";
+        String actual = "";
+        try{
+            actual = driver.findElement(By.xpath("//*[@id=\"location-container\"]/label/span")).getText();
+        }
+        catch (Exception e){}
+        Assert.assertEquals(actual, expected);
     }
 
-    @Test
+    @Test//+++
+    public void regAdWithSuburbCity(){
+        String expected = "Avižieniai";
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", expected, "+37067123456", "bike@gmail.com");
+        String actual = "";
+        try{
+            actual = driver.findElement(By.className("location-box")).getText();
+        }
+        catch (Exception e){}
+        Assert.assertEquals(actual, expected);
+    }
+
+    @Test//+++
+    public void regAdWithJapaneseCity(){
+        String notExpected = "山田太郎";
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", notExpected, "+37067123456", "bike@gmail.com");
+        String actual = "";
+        try{
+            actual = driver.findElement(By.className("location-box")).getText();
+        }
+        catch (Exception e){}
+        Assert.assertNotEquals(actual, notExpected);
+    }
+
+    @Test//+++
+    public void regAdWithRussianCity(){
+        String notExpected = "иванпетров";
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.",
+                "150", notExpected, "+37067123456", "bike@gmail.com");
+        String actual = "";
+        try{
+            actual = driver.findElement(By.className("location-box")).getText();
+        }
+        catch (Exception e){}
+        Assert.assertNotEquals(actual, notExpected);
+    }
+
+    @Test//+++
     public void regAdWithNoPhoneNumber(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.",
+                "150", "Kaunas", "", "bike@gmail.com");
+        String notExpected = "display:none";
+        String actualPe = driver.findElement(By.id("pe")).getDomAttribute("style");
+        String actualCe = driver.findElement(By.id("ce")).getDomAttribute("style");
+        Assert.assertEquals(actualPe,notExpected);
+        Assert.assertNotEquals(actualCe,notExpected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithNoCodePhoneNumber(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("061234567");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.",
+                "150", "Kaunas",
+                "061234567", "bike@gmail.com");
+        String expected = "display:none";
+        String actualPe = driver.findElement(By.id("pe")).getDomAttribute("style");
+        String actualCe = driver.findElement(By.id("ce")).getDomAttribute("style");
+        Assert.assertEquals(actualPe,expected);
+        Assert.assertEquals(actualCe,expected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithPhoneNumberWithSpaces(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("0 61 23 45 67");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas",
+                "0 61 23 45 67", "bike@gmail.com");
+        String notExpected = "display:none";
+        String actualPe = driver.findElement(By.id("pe")).getDomAttribute("style");
+        String actualCe = driver.findElement(By.id("ce")).getDomAttribute("style");
+        Assert.assertNotEquals(actualPe,notExpected);//blogas
+        Assert.assertEquals(actualCe,notExpected);//iveskite
     }
 
-    @Test
+    @Test//+++
     public void regAdWithOneNumberPhoneNumber(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys(generateRndNmbr(1));
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas",
+                generateRndNmbr(1), "bike@gmail.com");
+        String notExpected = "display:none";
+        String actualPe = driver.findElement(By.id("pe")).getDomAttribute("style");
+        String actualCe = driver.findElement(By.id("ce")).getDomAttribute("style");
+        Assert.assertNotEquals(actualPe,notExpected);
+        Assert.assertEquals(actualCe,notExpected);
     }
 
-    @Test
+    @Test//+++alert
     public void regAdWithIncorrectPhoneNumber(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+1-800-123-4567");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas",
+                "+1-800-123-4567", "bike@gmail.com");
+        String notExpected = "display:none";
+        String actualPe = driver.findElement(By.id("pe")).getDomAttribute("style");
+        Assert.assertNotEquals(actualPe,notExpected);
     }
 
-    @Test
-    public void regAdWithIncorrectPhoneNumber2(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+18001234567");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+    @Test//+++alert
+    public void regAdWithUSAPhoneNumber2(){
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas",
+                "+18001234567", "bike@gmail.com");
+        WebElement nextPage = null;
+        try{
+            nextPage = driver.findElement(By.id("fileinput-label"));
+        }
+        catch (Exception e){}
+        Assert.assertTrue(nextPage != null);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithCountryCodeAsPhoneNumber(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+370");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas",
+                "+370", "bike@gmail.com");
+        String notExpected = "display:none";
+        String actualPe = driver.findElement(By.id("pe")).getDomAttribute("style");
+        Assert.assertNotEquals(actualPe,notExpected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithLettersAsPhoneNumber(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys(generateRndLetters(5));
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas",
+                generateRndLetters(8), "bike@gmail.com");
+        String notExpected = "display:none";
+        String actualPe = driver.findElement(By.id("pe")).getDomAttribute("style");
+        Assert.assertNotEquals(actualPe,notExpected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithSymbolsAsPhoneNumber(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys(generateRndSymbols(3));
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas",
+                generateRndSymbols(8), "bike@gmail.com");
+        String notExpected = "display:none";
+        String actualPe = driver.findElement(By.id("pe")).getDomAttribute("style");
+        Assert.assertNotEquals(actualPe,notExpected);
     }
 
-    @Test
+    @Test//+++alert
     public void regAdWithLatvianPhoneNumber(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37122389321");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas",
+                "+37122389321", "bike@gmail.com");
+        String expected = "display:none";
+        String actualPe = driver.findElement(By.id("pe")).getDomAttribute("style");
+        Assert.assertNotEquals(actualPe,expected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithPolishPhoneNumber(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+48512345678");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas",
+                "+48512345678", "bike@gmail.com");
+        String expected = "display:none";
+        String actualPe = driver.findElement(By.id("pe")).getDomAttribute("style");
+        Assert.assertEquals(actualPe,expected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithUKPhoneNumber(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+447700123456");
-        driver.findElement(By.id("email")).sendKeys("bike@gmail.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas",
+                "+447700123456", "bike@gmail.com");
+        String expected = "display:none";
+        String actualPe = driver.findElement(By.id("pe")).getDomAttribute("style");
+        Assert.assertEquals(actualPe,expected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithNoEmail(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150",
+                "Kaunas", "+37067123456", "");
+        String expected = "Įveskite el.paštą.";
+        String actual = "";
+        try{
+            actual = driver.findElement(By.xpath("//*[@id=\"ee\"]")).getText();
+        }
+        catch (Exception e){}
+        Assert.assertEquals(actual, expected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithInvalidEmail(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("user@");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150",
+                "Kaunas", "+37067123456", "user@");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("ee")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithInvalidEmail1(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("email.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.",
+                "150", "Kaunas", "+37067123456", "@");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("ee")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithInvalidEmail2(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("user@com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150", "Kaunas", "+37067123456", "email.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("ee")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithInvalidEmail3(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("1@gmil.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.",
+                "150", "Kaunas", "+37067123456", "user@com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("ee")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithInvalidEmail4(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("1@1@.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150",
+                "Kaunas", "+37067123456", "1@gmil.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("ee")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithInvalidEmail5(){
-        driver.get("https://elenta.lt/patalpinti/ivesti-informacija?categoryId=AutoMoto_KitasTransportas&actionId=Iesko&returnurl=%2F");
-        driver.findElement(By.id("title")).sendKeys("Used Mountain Bike for Sale");
-        driver.findElement(By.id("text")).sendKeys("Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.");
-        driver.findElement(By.id("price")).sendKeys("150");
-        driver.findElement(By.id("location-search-box")).sendKeys("Kaunas");
-        driver.findElement(By.id("phone")).sendKeys("+37067123456");
-        driver.findElement(By.id("email")).sendKeys("@.com");
-        driver.findElement(By.xpath("//*[@id=\"submit-button\"]")).click();
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.", "150",
+                "Kaunas", "+37067123456", "1@1@.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("ee")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
+    @Test//+++
+    public void regAdWithRndmNmbrAsEmail(){
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.",
+                "150", "Kaunas", "+37067123456", generateRndNmbr(5));
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("ee")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
+    }
+
+    @Test//+++
+    public void regAdWithInvalidEmail6(){
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.",
+                "150", "Kaunas", "+37067123456", "r^^ka *s@gmail.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("ee")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
+    }
+
+    @Test//+++
+    public void regAdWithInvalidEmail8(){
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.",
+                "150", "Kaunas", "+37067123456", "rookas@google.mail.com");
+        String expected = "display:none";
+        String actual = driver.findElement(By.id("ee")).getDomAttribute("style");
+        Assert.assertEquals(actual, expected);
+    }
+
+    @Test//+++
+    public void regAdWithJapaneseEmail(){
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.",
+                "150", "Kaunas", "+37067123456", "山田太郎@gmail.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("ee")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
+    }
+
+    @Test//+++
+    public void regAdWithRussianEmail(){
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.",
+                "150", "Kaunas", "+37067123456", "rookas@mail.ru");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("ee")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
+    }
+
+    @Test//+++
+    public void regAdWithCyrillicEmail(){
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.",
+                "150", "Kaunas", "+37067123456", "иван.петров@gmail.com");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("ee")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
+    }
+
+    @Test//+++
+    public void regAdWithCylrillicEmail2(){
+        positiveTestInput("Used Mountain Bike for Sale", "Lightly used mountain bike in great condition. Size M, aluminum frame, 21-speed gearbox.",
+                "150", "Kaunas", "+37067123456", "иван.петров@пример.рy");
+        String notExpected = "display:none";
+        String actual = driver.findElement(By.id("ee")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
+    }
+
+    @Test//+++
     public void regAdWithNoPhoto(){
-        positiveTestInput();
+        positiveTestFirstPage();
         driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
         driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
         driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
-        driver.findElement(By.className("delete")).click();
-        Alert alert = driver.switchTo().alert();
-        alert.accept();
+        String expected = "SKELBIMAS RODOMAS";
+        String actual = "";
+        try{
+            actual = driver.findElement(By.xpath("//*[@id=\"main-container\"]/h4")).getText();
+        }
+        catch (Exception e){}
+        Assert.assertEquals(actual, expected);
     }
 
-    @Test
+    @Test//+++
+    public void regAdWithOneJpgPhoto(){
+        positiveTestFirstPage();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+        driver.findElement(By.id("inputfile")).sendKeys(
+                "C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike_jpg1.jpg");
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("photo-1")));
+        boolean isDisplayed = driver.findElement(By.id("photo-1")).isDisplayed();
+            Assert.assertTrue(isDisplayed);
+    }
+
+    @Test//+++
     public void regAdWith10JpgPhotos(){
-        positiveTestInput();
+        positiveTestFirstPage();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
         driver.findElement(By.id("inputfile")).sendKeys(
                 "C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike_jpg1.jpg\n" +
@@ -505,90 +639,82 @@ public class eLENTA_advertisementTest {
                 "C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike 8.jpg\n" +
                 "C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike 9.jpg\n" +
                 "C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike 10.jpg");
-        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
-        driver.findElement(By.className("delete")).click();
-        Alert alert = driver.switchTo().alert();
-        alert.accept();
+        wait(3000);
+        String notExpected = "display: block;";
+        String actual = driver.findElement(By.id("fileupload-message")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithPngPhoto(){
-        positiveTestInput();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        driver.findElement(By.id("inputfile")).sendKeys("C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike_png.png");
-        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
-        driver.findElement(By.className("delete")).click();
-        Alert alert = driver.switchTo().alert();
-        alert.accept();
+        positiveTestFirstPage();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+        driver.findElement(By.id("inputfile")).sendKeys(
+                "C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike_png.png");
+        wait(3000);
+        String notExpected = "display: block;";
+        String actual = driver.findElement(By.id("fileupload-message")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithWebpPhoto(){
-        positiveTestInput();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        driver.findElement(By.id("inputfile")).sendKeys("C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike_webp.webp");
-        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
-        driver.findElement(By.className("delete")).click();
-        Alert alert = driver.switchTo().alert();
-        alert.accept();
+        positiveTestFirstPage();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+        driver.findElement(By.id("inputfile")).sendKeys(
+                "C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\mountain bike_webp.webp");
+        wait(3000);
+        String expected = "display: block;";
+        String actual = driver.findElement(By.id("fileupload-message")).getDomAttribute("style");
+        Assert.assertEquals(actual,expected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithGifPhoto(){
-        positiveTestInput();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
-        driver.findElement(By.id("inputfile")).sendKeys("C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\m_gif.gif");
-        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
-        driver.findElement(By.className("delete")).click();
-        Alert alert = driver.switchTo().alert();
-        alert.accept();
+        positiveTestFirstPage();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+        driver.findElement(By.id("inputfile")).sendKeys(
+                "C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\m_gif.gif");
+        wait(3000);
+        String expected = "display: block;";
+        String actual = driver.findElement(By.id("fileupload-message")).getDomAttribute("style");
+        Assert.assertEquals(actual,expected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithBigSizePhoto(){
-        positiveTestInput();
+        positiveTestFirstPage();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
-        driver.findElement(By.id("inputfile")).sendKeys("C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\big.jpg");
-        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
-        driver.findElement(By.className("delete")).click();
-        Alert alert = driver.switchTo().alert();
-        alert.accept();
+        driver.findElement(By.id("inputfile")).sendKeys(
+                "C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\big.jpg");
+        wait(3000);
+        String notExpected = "display: block;";
+        String actual = driver.findElement(By.id("fileupload-message")).getDomAttribute("style");
+        Assert.assertNotEquals(actual,notExpected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithVideo(){
-        positiveTestInput();
+        positiveTestFirstPage();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
-        driver.findElement(By.id("inputfile")).sendKeys("C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\sample-5s.mp4");
-        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
-        driver.findElement(By.className("delete")).click();
-        Alert alert = driver.switchTo().alert();
-        alert.accept();
+        driver.findElement(By.id("inputfile")).sendKeys(
+                "C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\sample-5s.mp4");
+        wait(3000);
+        String expected = "display: block;";
+        String actual = driver.findElement(By.id("fileupload-message")).getDomAttribute("style");
+        Assert.assertEquals(actual,expected);
     }
 
-    @Test
+    @Test//+++
     public void regAdWithWordDocument(){
-        positiveTestInput();
+        positiveTestFirstPage();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
-        driver.findElement(By.id("inputfile")).sendKeys("C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\dviraciu prasymo_blankas.doc");
-        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"forward-button\"]")).click();
-        driver.findElement(By.xpath("//*[@id=\"promotead-form\"]/table/tbody/tr[12]/td[2]/a")).click();
-        driver.findElement(By.className("delete")).click();
-        Alert alert = driver.switchTo().alert();
-        alert.accept();
+        driver.findElement(By.id("inputfile")).sendKeys(
+                "C:\\Users\\Owner\\IdeaProjects\\eLENTA\\photos\\dviraciu prasymo_blankas.doc");
+        wait(3000);
+        String expected = "display: block;";
+        String actual = driver.findElement(By.id("fileupload-message")).getDomAttribute("style");
+        Assert.assertEquals(actual,expected);
     }
 
 
